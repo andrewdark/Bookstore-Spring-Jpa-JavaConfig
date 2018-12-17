@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Store</title>
+</head>
+<body>
+<h1>BOOK STORE</h1>
+<table>
+    <tr th:each="book : ${books}">
+        <span th:text="${book.name}"/>
+    </tr>
+</table>
+
+<img src="images/img001.jpg"/>
+<img th:src="@{/images/img001.jpg}">
+
+</body>
+</html>
