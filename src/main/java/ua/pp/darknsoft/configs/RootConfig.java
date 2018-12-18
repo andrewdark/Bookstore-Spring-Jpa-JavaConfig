@@ -3,7 +3,11 @@ package ua.pp.darknsoft.configs;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -12,24 +16,30 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+@Configuration
+@PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class RootConfig {
+
+    @Autowired
+    private Environment env;
+
     @Bean//(destroyMethod = "close")
     public DataSource dataSource() {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("org.postgresql.Driver");
-        hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/book_store");
-        hikariConfig.setUsername("postgres");
-        hikariConfig.setPassword("postgres");
+        hikariConfig.setDriverClassName(env.getProperty("datasource.driver-class-name"));
+        hikariConfig.setJdbcUrl(env.getProperty("datasource.url"));
+        hikariConfig.setUsername(env.getProperty("datasource.username"));
+        hikariConfig.setPassword(env.getProperty("datasource.password"));
 
-        hikariConfig.setMaximumPoolSize(5);
-        hikariConfig.setConnectionTestQuery("SELECT 1");
-        hikariConfig.setPoolName("springHikariCP");
+        hikariConfig.setMaximumPoolSize(Integer.parseInt(env.getProperty("hikari.maximum-pool-size")));
+        hikariConfig.setConnectionTestQuery(env.getProperty("hikari.connection-test-query"));
+        hikariConfig.setPoolName(env.getProperty("hikari.pool-name"));
 
-        hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", "true");
-        hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", "250");
-        hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
-        hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
+        hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", env.getProperty("hikari.cache-prep-stmts"));
+        hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", env.getProperty("hikari.prep-stmt-cache-size"));
+        hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", env.getProperty("hikari.prep-stmt-cache-sql-limit"));
+        hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", env.getProperty("hikari.use-server-prep-stmts"));
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
@@ -44,12 +54,12 @@ public class RootConfig {
         emf.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 
         Properties properties = new Properties();
-        properties.put("dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
-        properties.put("hibernate.max_fetch_depth", 3);
-        properties.put("hibernate.jdbc.fetch_size", 50);
-        properties.put("hibernate.jdbc.batch_size", 10);
-        properties.put("hibernate.show_sql", true);
-        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("dialect", env.getProperty("jpa.dialect"));
+        properties.put("hibernate.max_fetch_depth", Integer.parseInt(env.getProperty("jpa.max_fetch_depth")));
+        properties.put("hibernate.jdbc.fetch_size", Integer.parseInt(env.getProperty("jpa.jdbc-fetch_size")));
+        properties.put("hibernate.jdbc.batch_size", Integer.parseInt(env.getProperty("jpa.jdbc-batch_size")));
+        properties.put("hibernate.show_sql", env.getProperty("jpa.show-sql"));
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("jpa.hbm2ddl-auto"));
 
         emf.setJpaProperties(properties);
         emf.setPackagesToScan("ua.pp.darknsoft");
