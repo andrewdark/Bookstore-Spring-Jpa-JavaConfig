@@ -26,7 +26,8 @@ public abstract class RepositoryImpl<T, ID extends Serializable> implements Repo
 
     @Override
     public Optional<T> findById(ID var1) {
-        return Optional.empty();
+        Optional<T> entityOptional = Optional.ofNullable(entityManager.find(entityClass, var1));
+        return entityOptional;
     }
 
     @Override
