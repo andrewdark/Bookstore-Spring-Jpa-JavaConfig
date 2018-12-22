@@ -1,6 +1,7 @@
 package ua.pp.darknsoft.controllers.api.v1;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -22,7 +23,7 @@ public class BookRestController {
     @Autowired
     BookService bookService;
 
-    @GetMapping(path = "/books/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/books/{id}", produces = {"application/vnd.siren+json"})
     public ResponseEntity<Resource<Book>> getOneById(@PathVariable Long id) {
         Optional<Book> bookOptional = bookService.findById(id);
         if (!bookOptional.isPresent()) {
@@ -33,8 +34,14 @@ public class BookRestController {
         Resource<Book> bookResource = new Resource<>(bookOptional.get());
         ControllerLinkBuilder allBooks = linkTo(methodOn(this.getClass()).getAll());
         ControllerLinkBuilder self = linkTo(methodOn(this.getClass()).getOneById(id));
-        bookResource.add(self.withSelfRel());
-        bookResource.add(allBooks.withRel("all-book"));
+        ControllerLinkBuilder createBook = linkTo(methodOn(this.getClass()).create(null));
+        ControllerLinkBuilder updateBook = linkTo(methodOn(this.getClass()).update(id, null));
+        ControllerLinkBuilder deleteBook = linkTo(methodOn(this.getClass()).delete(id));
+        bookResource.add(self.withSelfRel().withType("GET"));
+        bookResource.add(allBooks.withRel("all-book").withType("GET").withDeprecation("false"));
+        bookResource.add(createBook.withRel("create").withType("POST").withDeprecation("false"));
+        bookResource.add(updateBook.withRel("update").withType("UPDATE").withDeprecation("false"));
+        bookResource.add(deleteBook.withRel("delete").withType("DELETE").withDeprecation("false"));
 
         return new ResponseEntity<>(bookResource, HttpStatus.OK);
     }
@@ -68,8 +75,9 @@ public class BookRestController {
     }
 
     @DeleteMapping(path = "/books/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         System.out.println("delete");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private List<Link> getSingleItemLinks(long id) {

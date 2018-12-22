@@ -2,6 +2,7 @@ package ua.pp.darknsoft.entities;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "book")
@@ -39,5 +40,20 @@ public class Book {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+        Book book = (Book) o;
+        return Objects.equals(id, book.id) &&
+                Objects.equals(name, book.name) &&
+                Objects.equals(date, book.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, date);
     }
 }
