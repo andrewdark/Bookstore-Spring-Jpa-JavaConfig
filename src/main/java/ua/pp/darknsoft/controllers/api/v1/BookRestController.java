@@ -1,22 +1,24 @@
 package ua.pp.darknsoft.controllers.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.pp.darknsoft.entities.Book;
-import org.springframework.http.ResponseEntity;
 import ua.pp.darknsoft.services.BookService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/v1")
@@ -72,16 +74,21 @@ public class BookRestController {
         return new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/books", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "/books/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Book> update(@PathVariable Long id, @RequestBody Book book) {
-
-        return new ResponseEntity<>(book, HttpStatus.NO_CONTENT);
+        Optional<Book> currentBook = bookService.findById(id);
+        if (currentBook.isEmpty()) {
+            return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
+        }
+        currentBook.get().setName(book.getName());
+        currentBook.get().setDate(book.getDate());
+        return new ResponseEntity<>(bookService.save(currentBook.get()), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/books/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        System.out.println("delete");
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        bookService.deleteById(id);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     private List<Link> getSingleItemLinks(long id) {

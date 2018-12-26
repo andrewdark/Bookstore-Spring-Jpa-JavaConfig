@@ -53,12 +53,16 @@ public abstract class RepositoryImpl<T, ID extends Serializable> implements Repo
 
     @Override
     public void deleteById(ID var1) {
-
+        Optional<T> temp = findById(var1);
+        if (temp.isEmpty()) {
+            return;
+        }
+        delete(temp.get());
     }
 
     @Override
     public void delete(T var1) {
-
+        entityManager.remove(var1);
     }
 
     @Override

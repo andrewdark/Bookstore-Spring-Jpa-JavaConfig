@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.pp.darknsoft.entities.Book;
 import ua.pp.darknsoft.repositories.BookRepository;
 import ua.pp.darknsoft.repositories.BookRepositoryImpl;
+import ua.pp.darknsoft.repositories.RepositoryImpl;
 import ua.pp.darknsoft.repositories.specifications.book.BookSpecification;
 import ua.pp.darknsoft.repositories.specifications.book.FindByNameAndDateSpecification;
 
@@ -20,13 +21,14 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     @Autowired
-    BookRepository bookRepository;
+    RepositoryImpl<Book,Long> bookRepository;
 
     @Override
     public Optional<Book> findById(Long id) {
         return bookRepository.findById(id);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<Book> findAll() {
 
@@ -36,6 +38,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Book> findAll(Pageable pageable) {
         return null;
     }
@@ -51,5 +54,10 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookRepository.query(new FindByNameAndDateSpecification(book));
         if (books.isEmpty()) return false;
         return true;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
     }
 }

@@ -17,4 +17,6 @@ public interface BookService {
     Book save(Book book);
 
     boolean isExist(Book book);
+
+    void deleteById(Long id);
 }
