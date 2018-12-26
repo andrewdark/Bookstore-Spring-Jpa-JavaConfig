@@ -15,4 +15,6 @@ public interface BookService {
     Page<Book> findAll(Pageable pageable);
 
     Book save(Book book);
+
+    boolean isExist(Book book);
 }

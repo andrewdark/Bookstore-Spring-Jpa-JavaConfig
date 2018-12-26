@@ -1,5 +1,10 @@
 package ua.pp.darknsoft.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ua.pp.darknsoft.utils.LocalDateTimeDeserializer;
+import ua.pp.darknsoft.utils.LocalDateTimeSerializer;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,6 +21,8 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime date;
 
     public Long getId() {

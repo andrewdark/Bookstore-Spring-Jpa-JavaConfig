@@ -1,5 +1,6 @@
 package ua.pp.darknsoft.controllers.api.v1;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
@@ -64,8 +65,11 @@ public class BookRestController {
 
     @PostMapping(path = "/books", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Object> create(@RequestBody Book book) {
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        if (bookService.isExist(book)) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        book.setId(null);
+        return new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/books", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

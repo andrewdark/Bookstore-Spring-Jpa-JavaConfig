@@ -42,7 +42,8 @@ public abstract class RepositoryImpl<T, ID extends Serializable> implements Repo
 
     @Override
     public <S extends T> S save(S var1) {
-        return null;
+
+        return entityManager.merge(var1);
     }
 
     @Override
@@ -87,4 +88,6 @@ public abstract class RepositoryImpl<T, ID extends Serializable> implements Repo
         criteriaQuery.where(predicate);
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
+
+
 }

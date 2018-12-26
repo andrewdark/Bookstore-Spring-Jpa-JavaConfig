@@ -10,6 +10,7 @@ import ua.pp.darknsoft.entities.Book;
 import ua.pp.darknsoft.repositories.BookRepository;
 import ua.pp.darknsoft.repositories.BookRepositoryImpl;
 import ua.pp.darknsoft.repositories.specifications.book.BookSpecification;
+import ua.pp.darknsoft.repositories.specifications.book.FindByNameAndDateSpecification;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
-        return null;
+        return bookRepository.save(book);
+    }
+
+    @Override
+    public boolean isExist(Book book) {
+
+        List<Book> books = bookRepository.query(new FindByNameAndDateSpecification(book));
+        if (books.isEmpty()) return false;
+        return true;
     }
 }

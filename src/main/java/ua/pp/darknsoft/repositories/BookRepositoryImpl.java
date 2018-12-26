@@ -9,4 +9,5 @@ public class BookRepositoryImpl extends RepositoryImpl<Book, Long> implements Bo
     public BookRepositoryImpl() {
         super(Book.class);
     }
+
 }
