@@ -3,6 +3,7 @@ package ua.pp.darknsoft.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import ua.pp.darknsoft.entities.Author;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,8 +32,11 @@ public abstract class RepositoryImpl<T, ID extends Serializable> implements Repo
     }
 
     @Override
-    public Iterable<T> findAll() {
-        return null;
+    public List<T> findAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+        criteriaQuery.from(entityClass);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override

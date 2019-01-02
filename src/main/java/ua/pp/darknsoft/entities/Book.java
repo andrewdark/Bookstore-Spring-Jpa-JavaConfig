@@ -1,5 +1,6 @@
 package ua.pp.darknsoft.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ua.pp.darknsoft.utils.LocalDateTimeDeserializer;
@@ -24,6 +25,10 @@ public class Book {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime date;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    @JsonBackReference
+    private Author author;
 
     public Long getId() {
         return id;
@@ -49,18 +54,25 @@ public class Book {
         this.date = date;
     }
 
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Book)) return false;
         Book book = (Book) o;
-        return Objects.equals(id, book.id) &&
-                Objects.equals(name, book.name) &&
+        return Objects.equals(name, book.name) &&
                 Objects.equals(date, book.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, date);
+        return Objects.hash(name, date);
     }
 }

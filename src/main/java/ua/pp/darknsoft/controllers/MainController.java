@@ -13,15 +13,13 @@ import java.util.List;
 
 @Controller
 public class MainController {
-    @Autowired
-    BookService bb;
+//    @Autowired
+//    BookService bb;
 
     @GetMapping(path = "/")
     public String index(Model dasModel) {
 
-        List<Book> books = bb.findAll();
         dasModel.addAttribute("curDate",LocalDateTime.now());
-        dasModel.addAttribute("books", books);
         return "index";
     }
 }

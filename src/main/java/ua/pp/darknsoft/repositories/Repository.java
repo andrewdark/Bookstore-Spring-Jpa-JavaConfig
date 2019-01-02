@@ -11,7 +11,7 @@ public interface Repository<T, ID> {
 
     Optional<T> findById(ID var1);
 
-    Iterable<T> findAll();
+    List<T> findAll();
 
     Page<T> findAll(Pageable var1);
 
